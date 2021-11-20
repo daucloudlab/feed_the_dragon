@@ -63,12 +63,12 @@ lives_rect.topright = (WINDOW_WIDTH-10, 10)
 
 game_over_text = font.render("GAMEOVER", True, GREEN, DARKGREEN)
 game_over_rect = game_over_text.get_rect()
-game_over_rect.center = (WINDOW_WIDTH//2, WINDOW_HEIGHT)
+game_over_rect.center = (WINDOW_WIDTH//2, WINDOW_HEIGHT//2)
 
 continue_text = font.render("Press any key to play again",
     True, GREEN, DARKGREEN)
 continue_rect = continue_text.get_rect()
-continue_rect.center = (WINDOW_WIDTH//2, WINDOW_HEIGHT//2-100)
+continue_rect.center = (WINDOW_WIDTH//2, WINDOW_HEIGHT//2+100)
 
 # clock
 FPS = 60
@@ -76,6 +76,7 @@ clock = pygame.time.Clock()
 
 # game cycle
 pygame.mixer.music.play(-1, 0.0)
+is_pause = False
 running = True
 while running:
     for event in pygame.event.get():
@@ -118,6 +119,27 @@ while running:
     display_surface.blit(player_image, player_rect)
     display_surface.blit(coin_image, coin_rect)
     
+    if player_lives == 0:
+        pygame.mixer.music.stop()
+        display_surface.blit(game_over_text, game_over_rect)
+        display_surface.blit(continue_text, continue_rect)    
+        pygame.display.update()
+        is_pause = True
+        while is_pause:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    is_pause = False
+                    running = False
+                if event.type == pygame.KEYDOWN:
+                    is_pause = False
+                    score = 0
+                    player_lives = PLAYER_STARTING_LIVES
+                    coin_velocity = COIN_STARTING_VELOCITY
+                    player_rect.y = WINDOW_HEIGHT//2
+                    pygame.mixer.music.play(-1, 0.0)
+            
+
+
     pygame.display.update()
     clock.tick(FPS)
 
