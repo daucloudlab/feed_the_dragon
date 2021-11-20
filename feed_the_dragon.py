@@ -43,7 +43,7 @@ player_rect.centery = WINDOW_HEIGHT//2
 coin_image = pygame.image.load("coin.png")
 coin_rect = coin_image.get_rect()
 coin_rect.x = WINDOW_WIDTH+BUFFER_DISTANCE
-coin_rect.y = random.randint(64, WINDOW_HEIGHT-32)
+coin_rect.y = random.randint(64, WINDOW_HEIGHT)
 
 #fonts
 font = pygame.font.Font('AttackGraffiti.ttf', 32)
@@ -87,6 +87,26 @@ while running:
         player_rect.y -= PLAYER_VELOCITY
     if keys[pygame.K_DOWN] and player_rect.bottom < WINDOW_HEIGHT:
         player_rect.y += PLAYER_VELOCITY
+
+    
+    if coin_rect.x < 0:
+        player_lives -= 1
+        miss_sound.play()
+        coin_rect.x = WINDOW_WIDTH+BUFFER_DISTANCE
+        coin_rect.y = random.randint(64, WINDOW_HEIGHT)
+    else:
+        coin_rect.x -= coin_velocity
+    
+    if player_rect.colliderect(coin_rect):
+        score += 1
+        coin_sound.play()
+        coin_velocity += COIN_ACCELERATION
+        coin_rect.x = WINDOW_WIDTH+BUFFER_DISTANCE
+        coin_rect.y = random.randint(64, WINDOW_HEIGHT)
+    
+
+    lives_text = font.render("Lives: " + str(player_lives), True, GREEN, DARKGREEN)
+    score_text = font.render("Score: " + str(score), True, GREEN, DARKGREEN)
 
     display_surface.fill(BLACK)
     
